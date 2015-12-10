@@ -45,6 +45,7 @@ This is a preference issue.
 A simple script is needed to invoke TOC class and parse the TOC file.
 
 	import tocparser
+	import sys
 
 	def main():
 		t = tocparser.TOC.load(sys.argv[1])

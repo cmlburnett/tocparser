@@ -278,6 +278,6 @@ def p_error(p):
 
 
 def yaccer(txt):
-	parser = yacc.yacc(debug=True)
+	parser = yacc.yacc()
 	return parser.parse(txt, lexer=lex.lex())
 

@@ -237,52 +237,89 @@ class Track:
 
 	@property
 	def Number(self):
+		"""
+		Track number.
+		"""
 		return self._num
 
 	@property
 	def Copy(self):
+		"""
+		True or False for permitting copying.
+		"""
 		return self._copy
 
 	@property
 	def PreEmphasis(self):
+		"""
+		True or False for pre-emphasis.
+		"""
 		return self._preemphasis
 
 	@property
 	def Channels(self):
+		"""
+		Number of channels (always 2 for CDs).
+		"""
 		return self._channels
 
 	@property
 	def ISRC(self):
+		"""
+		ISRC (Internationl Standard Recording Code) that is unique to each track.
+		"""
 		return self._isrc
 
 	@property
 	def Meta(self):
+		"""
+		Meta information about this track (Title, Performer, etc.)
+		"""
 		return self._meta
 
 	@property
 	def FilePath(self):
+		"""
+		Path to the file where this track is located
+		"""
 		return self._filepath
 
 	@property
 	def FileStart(self):
+		"""
+		Start time of this track in MSF format.
+		"""
 		return self._filestart
 
 	@property
 	def FileEnd(self):
+		"""
+		End time of this track in MSF format.
+		"""
 		return self._fileend
 
 	@property
 	def FileDuration(self):
+		"""
+		Duration of this track in MSF format.
+		"""
 		return self._fileduration
 
 
 def LangCodeToName(idx):
+	"""
+	Converts language code found in the TOC to the ISO 3166-1 alpha-2 value that roughly matches the location
+	of the language. Not all entries have them (empty string if so) and probably shouldn't be used.
+	"""
 	if idx in _langcodes:
 		return _langcodes[idx][1]
 	else:
 		return None
 
 def LangCodeTo2Letter(idx):
+	"""
+	Converts language code found in the TOC to the name of the language per that found in libcdio's documentation (see comment below in source code).
+	"""
 	if idx in _langcodes:
 		return _langcodes[idx][0]
 	else:

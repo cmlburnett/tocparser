@@ -1,0 +1,14 @@
+Two simple steps:
+
+	python3 setup.py build
+
+and then to install
+
+	python3 setup.py install
+
+You can install in your home directory instead
+
+	python3 setup.py install --home ~
+
+Be sure you have PLY installed and working. Obtaining and installing this library is outside the scope of this documentation.
+

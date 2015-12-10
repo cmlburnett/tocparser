@@ -1,7 +1,7 @@
 tocparser -- a Python parser for TOC files produced by cdrdao.
 By Colin ML Burnett
 
-This Python module parses a subset of the TOC file format as produced by cdrdao. This uses PLY, which is a Python implementation of lex and yacc.
+This Python module parses a subset of the TOC file format as produced by cdrdao. This uses PLY, which is a Python implementation of lex and yacc. There are other Python modules that can do this (e.g., audiotools) but I wanted to write my own and I didn't want to figure out some installation problem with audiotools.
 
 With PLY, the grammar is specified in the functions defined and uses the defined tokens to lex the input data.
 

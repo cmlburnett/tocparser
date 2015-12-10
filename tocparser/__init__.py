@@ -13,6 +13,11 @@ class MSF:
 	"""
 
 	def __init__(self, m,s,f):
+		"""
+		Supply minutes, seconds, and frames.
+		Each will be converted to an integer and normalized appropriately.
+		"""
+
 		# Ensure they are integers
 		m = int(m)
 		s = int(s)
@@ -31,39 +36,73 @@ class MSF:
 		self.f = f
 
 	def __str__(self):
+		"""
+		Gets MSF in "MM:SS.FF" format and zero-padded.
+		"""
 		return "%02d:%02d.%02d" % (self.m, self.s, self.f)
 
 	def __repr__(self):
 		return "<MSF m=%d s=%d f=%d str=%s>" % (self.m, self.s, self.f, str(self))
 
 	def __add__(self, b):
+		"""
+		Adds two MSF objects together component-by-component and normalizes the result.
+		"""
 		return MSF(self.M + b.M, self.S + b.S, self.F + b.F)
 
 	@staticmethod
 	def Create(val):
+		"""
+		Creates an MSF object.
+		If @val is an integer then it is assumed to be the number of frames.
+		If
+		"""
 		if type(val) == int:
 			return MSF(0,0,val)
-		else:
+		elif type(val) == str:
 			parts = val.split(':')
 			if len(parts) != 3:
 				raise ValueError("Expected M:S:F formation, didn't get it '%s'" % (val,))
 			return MSF(*parts)
+		else:
+			raise TypeError("Unable to handle '%s' and convert to MSF format." % str(type(val)))
 
 	@property
-	def M(self): return self.m
+	def M(self):
+		"""
+		Minutes.
+		"""
+		return self.m
 
 	@property
-	def S(self): return self.s
+	def S(self):
+		"""
+		Seconds. Bounded to [0, 59].
+		"""
+		return self.s
 
 	@property
-	def F(self): return self.f
+	def F(self):
+		"""
+		Frames. Bounded to [0, 74] and is 1/75th per second per frame.
+		"""
+		return self.f
 
 	@property
-	def TotalFrames(self): return self.F + (self.S * 75) + (self.M * 60 * 75)
+	def TotalFrames(self):
+		"""
+		Total frames for this time.
+		Can be fed into the @f parameter to the constructor to normalize to MSF format.
+		"""
+		return self.F + (self.S * 75) + (self.M * 60 * 75)
 
 
 	@staticmethod
-	def Zero(): return MSF(0,0,0)
+	def Zero():
+		"""
+		Gets an MSF of zero.
+		"""
+		return MSF(0,0,0)
 
 class TOC:
 	"""
@@ -116,6 +155,9 @@ class TOC:
 
 	@property
 	def Header(self):
+		"""
+		Gets the hader of the TOC file.
+		"""
 		return self._header
 
 	@property
@@ -137,6 +179,9 @@ class TOC:
 
 	@property
 	def TotalLength(self):
+		"""
+		Gets the total length of the CD by adding the durations of all the tracks.
+		"""
 		z = MSF.Zero()
 
 		for t in self.Tracks:

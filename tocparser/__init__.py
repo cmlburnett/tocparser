@@ -58,6 +58,10 @@ class MSF:
 	@property
 	def F(self): return self.f
 
+	@property
+	def TotalFrames(self): return self.F + (self.S * 75) + (self.M * 60 * 75)
+
+
 	@staticmethod
 	def Zero(): return MSF(0,0,0)
 

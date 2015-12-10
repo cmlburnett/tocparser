@@ -53,18 +53,20 @@ A simple script is needed to invoke TOC class and parse the TOC file.
 		print("Header")
 		print("  Language map: %s" % t.Header.LangMap)
 		print("  Meta: %s" % t.Header.Meta)
-		print("  Total Length: %s" % t.TotalLength)
+		print("  Catalog: %s" % t.Header.Catalog)
+		print("  Total Length: %s (%d frames)" % (t.TotalLength,t.TotalLength.TotalFrames))
 		
 		print("Tracks")
 		
 		for t in t.Tracks:
 			print("  Track %d" % t.Number)
 			print("    Meta: %s" % t.Meta)
+			print("    ISRC: %s" % t.ISRC)
 			print("    Path: %s" % t.FilePath)
-			print("   Start: %s" % (t.FileStart,))
-			print("     Dur: %s" % (t.FileDuration,))
-			print("     End: %s" % (t.FileEnd,))
-			
+			print("   Start: %s (%d frames)" % (t.FileStart,t.FileStart.TotalFrames))
+			print("     Dur: %s (%d frames)" % (t.FileDuration,t.FileDuration.TotalFrames))
+			print("     End: %s (%d frames)" % (t.FileEnd,t.FileEnd.TotalFrames))
+
 	if __name__ == '__main__':
 		main()
 
@@ -73,14 +75,14 @@ Output:
 	Header
 	  Language map: {0: (9, 'EN', 'English')}
 	  Meta: {0: {'title': "Foo", 'performer': 'Bar'}}
-	  Total Length: 43:18.65
+	  Total Length: 43:18.65 (194915 frames)
 	Tracks
 	  Track 1
 		Meta: {0: {'title': 'Monkey', 'performer': 'Bar'}}
 		Path: /dev/foo
-	   Start: 00:00.00
-		 Dur: 04:49.60
-		 End: 04:49.60
+	   Start: 00:00.00 (0 frames)
+		 Dur: 04:49.60 (21735 frames)
+		 End: 04:49.60 (21735 frames)
 	............
 
 -------------

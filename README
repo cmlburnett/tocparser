@@ -1,0 +1,91 @@
+tocparser -- a Python parser for TOC files produced by cdrdao.
+By Colin ML Burnett
+
+This Python module parses a subset of the TOC file format as produced by cdrdao. This uses PLY, which is a Python implementation of lex and yacc.
+
+With PLY, the grammar is specified in the functions defined and uses the defined tokens to lex the input data.
+
+---------
+:Install:
+---------
+
+	pythone3 setup.py build
+	pythone3 setup.py install
+
+---------------
+:Documentation:
+---------------
+
+Use Python's online help to get the documentation from the classes.
+
+	$ python3
+	>>> import tocparser
+
+	>>> help(tocparser.TOC)
+	Help on class TOC in module tocparser:
+
+	class TOC(builtins.object)
+	 |  Table of contents of a CD.
+	 |  
+	 |  Methods defined here:
+	 |  
+	 |  GetTrack(self, num)
+	 |      Gets the track given @num, a one-based track number.
+	....................
+
+Note that the time formats are in MSF format: minute-second-frame.
+A single frame on a CD is 1/75th of a second.
+The format used here in the output is MM:SS.FF unlike MM:SS:FF used in the TOC files.
+This is a preference issue.
+
+-------
+:Usage:
+-------
+
+A simple script is needed to invoke TOC class and parse the TOC file.
+
+	import tocparser
+
+	def main():
+		t = tocparser.TOC.load(sys.argv[1])
+		
+		print("Header")
+		print("  Language map: %s" % t.Header.LangMap)
+		print("  Meta: %s" % t.Header.Meta)
+		print("  Total Length: %s" % t.TotalLength)
+		
+		print("Tracks")
+		
+		for t in t.Tracks:
+			print("  Track %d" % t.Number)
+			print("    Meta: %s" % t.Meta)
+			print("    Path: %s" % t.FilePath)
+			print("   Start: %s" % (t.FileStart,))
+			print("     Dur: %s" % (t.FileDuration,))
+			print("     End: %s" % (t.FileEnd,))
+			
+	if __name__ == '__main__':
+		main()
+
+Output:
+
+	Header
+	  Language map: {0: (9, 'EN', 'English')}
+	  Meta: {0: {'title': "Foo", 'performer': 'Bar'}}
+	  Total Length: 43:18.65
+	Tracks
+	  Track 1
+		Meta: {0: {'title': 'Monkey', 'performer': 'Bar'}}
+		Path: /dev/foo
+	   Start: 00:00.00
+		 Dur: 04:49.60
+		 End: 04:49.60
+	............
+
+-------------
+:Organizaton:
+-------------
+
+The primary access point is the TOC class, as shown above, and its related classes: Header and Track.
+These classes are used to contain the parsed data.
+

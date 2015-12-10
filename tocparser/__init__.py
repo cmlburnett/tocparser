@@ -153,6 +153,8 @@ class Header:
 		self._langmap = {}
 		self._meta = {}
 
+		self._catalog = p['catalog']
+
 		for entry in p['map']:
 			self._langmap[ entry[0] ] = (entry[1], LangCodeTo2Letter(entry[1]), LangCodeToName(entry[1]))
 
@@ -175,6 +177,13 @@ class Header:
 		return self._langmap
 
 	@property
+	def Catalog(self):
+		"""
+		Thirteen character catalog number as registered with the RIAA.
+		"""
+		return self._catalog
+
+	@property
 	def Meta(self):
 		"""
 		Gets the meta information that is keyed on the language map index and to a dictionary of string keys and values.
@@ -190,6 +199,7 @@ class Track:
 	_copy = None
 	_preemphasis = None
 	_channels = None
+	_isrc = None
 	_meta = None
 	_filepath = None
 	_filestart = None
@@ -213,6 +223,7 @@ class Track:
 
 			self._meta[ entry['langnum'] ] = os
 
+		self._isrc = p['isrc']
 		self._filepath = p['path']['path']
 
 		# Start and duration are given, add them to get the end
@@ -235,6 +246,10 @@ class Track:
 	@property
 	def Channels(self):
 		return self._channels
+
+	@property
+	def ISRC(self):
+		return self._isrc
 
 	@property
 	def Meta(self):

@@ -21,6 +21,8 @@ tokens = (
 	'RCURLY',
 	'COLON',
 	'START',
+	'SIZE_INFO',
+	'COMMA',
 
 	'LANGUAGE',
 	'LANGUAGE_MAP',
@@ -56,6 +58,8 @@ t_LCURLY = r'\{'
 t_RCURLY = r'\}'
 t_COLON = r':'
 t_START = r'START'
+t_SIZE_INFO = r'SIZE_INFO'
+t_COMMA = r','
 
 t_LANGUAGE = r'LANGUAGE'
 t_LANGUAGE_MAP = r'LANGUAGE_MAP'
@@ -150,6 +154,9 @@ def lexer(txt):
 #  CDLANGOPT : TITLE TEXT
 #            | PERFORMER TEXT
 #            | MESSAGE TEXT
+#            | SIZE_INFO LCURLY NUMBERCSV RCURLY
+#
+#  NUMBERCSV : NUMBERCSV COMMA NUMBER
 #
 #   FILELINE : FILE TEXT TIMES START TIME
 #            | FILE TEXT TIMES
@@ -252,6 +259,18 @@ def p_CDLANGOPT_performer(p):
 def p_CDLANGOPT_message(p):
 	'CDLANGOPT : MESSAGE TEXT'
 	p[0] = ('message', p[2])
+
+def p_CDLANGOPT_sizeinfo(p):
+	'CDLANGOPT : SIZE_INFO LCURLY NUMBERCSV RCURLY'
+	p[0] = ('sizeinfo', p[3])
+
+def p_NUMBERCSV(p):
+	'NUMBERCSV : NUMBERCSV COMMA NUMBER'
+	p[0] = p[1] + [p[3]]
+
+def p_NUMBERCSV_term(p):
+	'NUMBERCSV : NUMBER'
+	p[0] = [p[1]]
 
 def p_FILELINE_start(p):
 	'FILELINE : FILE TEXT TIMES START TIME'

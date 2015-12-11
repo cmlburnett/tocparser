@@ -21,7 +21,6 @@ tokens = (
 	'RCURLY',
 	'COLON',
 	'START',
-	'SIZE_INFO',
 	'COMMA',
 
 	'LANGUAGE',
@@ -31,6 +30,13 @@ tokens = (
 	'TITLE',
 	'PERFORMER',
 	'MESSAGE',
+	'SIZE_INFO',
+	'SONGWRITER',
+	'COMPOSER',
+	'ARRANGER',
+	'DISC_ID',
+	'TOC_INFO1',
+	'UPC_EAN',
 
 
 	'TIME',
@@ -58,7 +64,6 @@ t_LCURLY = r'\{'
 t_RCURLY = r'\}'
 t_COLON = r':'
 t_START = r'START'
-t_SIZE_INFO = r'SIZE_INFO'
 t_COMMA = r','
 
 t_LANGUAGE = r'LANGUAGE'
@@ -68,6 +73,13 @@ t_FILE = r'FILE'
 t_TITLE = r'TITLE'
 t_PERFORMER = r'PERFORMER'
 t_MESSAGE = r'MESSAGE'
+t_SIZE_INFO = r'SIZE_INFO'
+t_SONGWRITER = r'SONGWRITER'
+t_COMPOSER = r'COMPOSER'
+t_ARRANGER = r'ARRANGER'
+t_DISC_ID = r'DISC_ID'
+t_TOC_INFO1 = r'TOC_INFO1'
+t_UPC_EAN = r'UPC_EAN'
 
 def t_TIME(t):
 	r'\d+:\d+:\d+'
@@ -155,6 +167,13 @@ def lexer(txt):
 #            | PERFORMER TEXT
 #            | MESSAGE TEXT
 #            | SIZE_INFO LCURLY NUMBERCSV RCURLY
+#            | SONGWRITER TEXT
+#            | COMPOSER TEXT
+#            | ARRANGER TEXT
+#            | DISC_ID TEXT
+#            | TOC_INFO1 LCURLY NUMBERCSV RCURLY
+#            | UPC_EAT TEXT
+#            | ISRC TEXT
 #
 #  NUMBERCSV : NUMBERCSV COMMA NUMBER
 #
@@ -263,6 +282,34 @@ def p_CDLANGOPT_message(p):
 def p_CDLANGOPT_sizeinfo(p):
 	'CDLANGOPT : SIZE_INFO LCURLY NUMBERCSV RCURLY'
 	p[0] = ('sizeinfo', p[3])
+
+def p_CDLANGOPT_songwriter(p):
+	'CDLANGOPT : SONGWRITER TEXT'
+	p[0] = ('songwriter', p[2])
+
+def p_CDLANGOPT_composer(p):
+	'CDLANGOPT : COMPOSER TEXT'
+	p[0] = ('composer', p[2])
+
+def p_CDLANGOPT_arranger(p):
+	'CDLANGOPT : ARRANGER TEXT'
+	p[0] = ('arranger', p[2])
+
+def p_CDLANGOPT_discid(p):
+	'CDLANGOPT : DISC_ID TEXT'
+	p[0] = ('discid', p[2])
+
+def p_CDLANGOPT_upcean(p):
+	'CDLANGOPT : UPC_EAN TEXT'
+	p[0] = ('upc_ean', p[2])
+
+def p_CDLANGOPT_isrc(p):
+	'CDLANGOPT : ISRC TEXT'
+	p[0] = ('isrc', p[2])
+
+def p_CDLANGOPT_tocinfo1(p):
+	'CDLANGOPT : TOC_INFO1 LCURLY NUMBERCSV RCURLY'
+	p[0] = ('tocinfo1', p[3])
 
 def p_NUMBERCSV(p):
 	'NUMBERCSV : NUMBERCSV COMMA NUMBER'

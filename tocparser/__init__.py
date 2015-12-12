@@ -3,7 +3,7 @@ TOC file parser as produced by cdrdao.
 The TOC can contain metadata in addition to the track listing and times.
 """
 
-__all__ = ['TOC', 'version']
+__all__ = ['TOC', 'MSF', 'LangCodeToName', 'LangCodeTo2Letter', 'version']
 
 from .lex import lexer, yaccer
 

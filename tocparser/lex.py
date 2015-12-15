@@ -169,7 +169,7 @@ t_ignore = ' \t'
 
 def t_error(t):
 	print("Error parsing: %s" %t)
-	sys.exit(1)
+	raise Exception("Error lexing input", str(t))
 
 def lexer(txt):
 	l = lex.lex()
@@ -346,7 +346,7 @@ def p_TIMES_time(p):
 def p_error(p):
 	print("Syntax error")
 	print(p)
-	sys.exit(1)
+	raise Exception("Syntax error while yacc'ing the input", str(p))
 
 
 def yaccer(txt):

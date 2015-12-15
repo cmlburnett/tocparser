@@ -174,7 +174,7 @@ class TOC:
 		"""
 		for track in self._tracks:
 			if track.Number == num:
-				return trac
+				return track
 
 		return None
 

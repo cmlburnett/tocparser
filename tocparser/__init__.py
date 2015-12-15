@@ -123,12 +123,12 @@ class TOC:
 			return TOC.loads(dat)
 	
 	@staticmethod
-	def loads(txt):
+	def loads(txt, encoding='latin-1'):
 		"""
 		Load from string.
 		"""
 		t = TOC()
-		t.parse(txt.decode('latin-1'))
+		t.parse(txt.decode(encoding))
 
 		return t
 

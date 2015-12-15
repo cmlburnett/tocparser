@@ -1,4 +1,65 @@
 """
+Lexer and yaccer for TOC format.
+This implementation is limited and tweaked as needed.
+
+PLY is a pure python implementation of lex and yacc, the former for creating tokens from text and the latter for making sense of the order of tokens.
+Because of the intended use, the only API provided is a simple read-in-once-and-parse-it.
+
+The BNF is shown below and is implemented PLY-style by including one clause in its own function.
+
+      WHOLE : CD_DA HEADER TRACKS
+
+     HEADER : CATALOG TEXT CD_TEXT LCURLY LMAP CDLANGS RCURLY
+            |              CD_TEXT LCURLY LMAP CDLANGS RCURLY
+
+       LMAP : LANGUAGE_MAP LCURLY LMAPOPTS RCURLY
+
+   LMAPOPTS : LMAPOPTS LMAPOPT
+            : LMAPOPT
+
+    LMAPOPT : NUMBER COLON NUMBER
+
+       TRKS : TRKS TRK
+            | TRK
+
+        TRK : COMMENT TRACK AUDIO CPY PE ISRCBLK TWO_CHANNEL_AUDIO CDT FILELINE
+            | COMMENT TRACK AUDIO CPY PE         TWO_CHANNEL_AUDIO CDT FILELINE
+
+        CPY : NO COPY
+            | COPY
+
+         PE : NO PRE_EMPHASIS
+            | PRE_EMPHASIS
+
+        CDT : CD_TEXT LCURLY CDLANGS RCURLY
+
+    CDLANGS : CDLANGS CDLANG
+            | CDLANG
+
+     CDLANG : LANGUAGE NUMBER LCURLY CDLANGOPTS RCURLY
+
+ CDLANGOPTS : CDLANGOPTS CDLANGOPT
+            | CDLANGOPT
+
+  CDLANGOPT : TITLE TEXT
+            | PERFORMER TEXT
+            | MESSAGE TEXT
+            | SIZE_INFO LCURLY NUMBERCSV RCURLY
+            | SONGWRITER TEXT
+            | COMPOSER TEXT
+            | ARRANGER TEXT
+            | DISC_ID TEXT
+            | TOC_INFO1 LCURLY NUMBERCSV RCURLY
+            | UPC_EAT TEXT
+            | ISRC TEXT
+
+  NUMBERCSV : NUMBERCSV COMMA NUMBER
+
+   FILELINE : FILE TEXT TIMES START TIME
+            | FILE TEXT TIMES
+
+      TIMES : NUMBER TIME
+            : TIME TIME
 """
 
 import sys
@@ -127,61 +188,6 @@ def lexer(txt):
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------
 # Parsing
-
-# Grammar
-#      WHOLE : CD_DA HEADER TRACKS
-#
-#     HEADER : CATALOG TEXT CD_TEXT LCURLY LMAP CDLANGS RCURLY
-#            |              CD_TEXT LCURLY LMAP CDLANGS RCURLY
-#
-#       LMAP : LANGUAGE_MAP LCURLY LMAPOPTS RCURLY
-#
-#   LMAPOPTS : LMAPOPTS LMAPOPT
-#            : LMAPOPT
-#
-#    LMAPOPT : NUMBER COLON NUMBER
-#
-#       TRKS : TRKS TRK
-#            | TRK
-#
-#        TRK : COMMENT TRACK AUDIO CPY PE ISRCBLK TWO_CHANNEL_AUDIO CDT FILELINE
-#            | COMMENT TRACK AUDIO CPY PE         TWO_CHANNEL_AUDIO CDT FILELINE
-#
-#        CPY : NO COPY
-#            | COPY
-#
-#         PE : NO PRE_EMPHASIS
-#            | PRE_EMPHASIS
-#
-#        CDT : CD_TEXT LCURLY CDLANGS RCURLY
-#
-#    CDLANGS : CDLANGS CDLANG
-#            | CDLANG
-#
-#     CDLANG : LANGUAGE NUMBER LCURLY CDLANGOPTS RCURLY
-#
-# CDLANGOPTS : CDLANGOPTS CDLANGOPT
-#            | CDLANGOPT
-#
-#  CDLANGOPT : TITLE TEXT
-#            | PERFORMER TEXT
-#            | MESSAGE TEXT
-#            | SIZE_INFO LCURLY NUMBERCSV RCURLY
-#            | SONGWRITER TEXT
-#            | COMPOSER TEXT
-#            | ARRANGER TEXT
-#            | DISC_ID TEXT
-#            | TOC_INFO1 LCURLY NUMBERCSV RCURLY
-#            | UPC_EAT TEXT
-#            | ISRC TEXT
-#
-#  NUMBERCSV : NUMBERCSV COMMA NUMBER
-#
-#   FILELINE : FILE TEXT TIMES START TIME
-#            | FILE TEXT TIMES
-#
-#      TIMES : NUMBER TIME
-#            : TIME TIME
 
 def p_WHOLE(p):
 	'WHOLE : CD_DA HEADER TRKS'

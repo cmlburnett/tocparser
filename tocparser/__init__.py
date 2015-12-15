@@ -9,7 +9,7 @@ from .lex import lexer, yaccer
 
 class MSF:
 	"""
-	Container for minute, second, frame format that times in CDs use.
+	Immutable container for minute:second:frame format that times in CDs use.
 	There are 75 frames per second.
 	"""
 

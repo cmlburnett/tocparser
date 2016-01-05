@@ -142,7 +142,10 @@ class TOC:
 		p = yaccer(txt)
 
 		# Get the header information
-		h = Header(p['header'])
+		if p['header'] != None:
+			h = Header(p['header'])
+		else:
+			h = None
 		ts = []
 
 		# Iterate through the tracks
@@ -266,12 +269,13 @@ class Track:
 		self._channels = p['channels']
 		self._meta = {}
 
-		for entry in p['text']:
-			os = {}
-			for o in entry['opts']:
-				os[ o[0] ] = o[1]
+		if p['text'] != None:
+			for entry in p['text']:
+				os = {}
+				for o in entry['opts']:
+					os[ o[0] ] = o[1]
 
-			self._meta[ entry['langnum'] ] = os
+				self._meta[ entry['langnum'] ] = os
 
 		self._isrc = p['isrc']
 		self._filepath = p['path']['path']

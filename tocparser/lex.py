@@ -8,6 +8,7 @@ Because of the intended use, the only API provided is a simple read-in-once-and-
 The BNF is shown below and is implemented PLY-style by including one clause in its own function.
 
       WHOLE : CD_DA HEADER TRACKS
+            | CD_DA        TRACKS
 
      HEADER : CATALOG TEXT CD_TEXT LCURLY LMAP CDLANGS RCURLY
             |              CD_TEXT LCURLY LMAP CDLANGS RCURLY
@@ -22,8 +23,10 @@ The BNF is shown below and is implemented PLY-style by including one clause in i
        TRKS : TRKS TRK
             | TRK
 
-        TRK : COMMENT TRACK AUDIO CPY PE ISRCBLK TWO_CHANNEL_AUDIO CDT FILELINE
-            | COMMENT TRACK AUDIO CPY PE         TWO_CHANNEL_AUDIO CDT FILELINE
+        TRK : COMMENT TRACK AUDIO CPY PE ISRC TEXT TWO_CHANNEL_AUDIO CDT FILELINE
+            | COMMENT TRACK AUDIO CPY PE ISRC TEXT TWO_CHANNEL_AUDIO     FILELINE
+            | COMMENT TRACK AUDIO CPY PE           TWO_CHANNEL_AUDIO CDT FILELINE
+            | COMMENT TRACK AUDIO CPY PE           TWO_CHANNEL_AUDIO     FILELINE
 
         CPY : NO COPY
             | COPY
@@ -192,9 +195,13 @@ def lexer(txt):
 # --------------------------------------------------------------------------------
 # Parsing
 
-def p_WHOLE(p):
+def p_WHOLE_header(p):
 	'WHOLE : CD_DA HEADER TRKS'
 	p[0] = {'header': p[2], 'tracks': p[3]}
+
+def p_WHOLE(p):
+	'WHOLE : CD_DA        TRKS'
+	p[0] = {'header': None, 'tracks': p[2]}
 
 def p_HEADER_catalog(p):
 	'HEADER : CATALOG TEXT CD_TEXT LCURLY LMAP CDLANGS RCURLY'
@@ -228,13 +235,21 @@ def p_TRKS_term(p):
 	'TRKS : TRK'
 	p[0] = [p[1]]
 
-def p_TRK_ISRC(p):
+def p_TRK_CDT_ISRC(p):
 	'TRK : COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO ISRC TEXT CDT FILELINE'
 	p[0] = {'comment': p[1], 'copy': p[4], 'preemphasis': p[5], 'channels': 2, 'isrc': p[8], 'text': p[9], 'path': p[10]}
 
-def p_TRK(p):
-	'TRK : COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO CDT FILELINE'
+def p_TRK_ISRC(p):
+	'TRK : COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO ISRC TEXT     FILELINE'
+	p[0] = {'comment': p[1], 'copy': p[4], 'preemphasis': p[5], 'channels': 2, 'isrc': p[8], 'text': None, 'path': p[9]}
+
+def p_TRK_CDT(p):
+	'TRK : COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO           CDT FILELINE'
 	p[0] = {'comment': p[1], 'copy': p[4], 'preemphasis': p[5], 'channels': 2, 'isrc': None, 'text': p[7], 'path': p[8]}
+
+def p_TRK(p):
+	'TRK : COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO               FILELINE'
+	p[0] = {'comment': p[1], 'copy': p[4], 'preemphasis': p[5], 'channels': 2, 'isrc': None, 'text': None, 'path': p[7]}
 
 def p_CPY_NO(p):
 	'CPY : NO COPY'

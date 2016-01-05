@@ -164,7 +164,9 @@ def t_NUMBER(t):
 
 def t_TEXT(t):
 	r'"(?:[^"\\]|\\.)*"'
-	t.value = t.value[1:-1]
+	# The regex skips over escaped quotes properly, but the backslashes remain in the string
+	# Need to use the decode to strip ot the escaping backslashes
+	t.value = t.value[1:-1].encode('utf-8').decode('unicode_escape')
 	return t
 
 def t_newline(t):

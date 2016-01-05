@@ -52,6 +52,7 @@ The BNF is shown below and is implemented PLY-style by including one clause in i
             | TOC_INFO1 LCURLY NUMBERCSV RCURLY
             | UPC_EAT TEXT
             | ISRC TEXT
+			| RESERVED4 TEXT
 
   NUMBERCSV : NUMBERCSV COMMA NUMBER
 
@@ -77,6 +78,7 @@ tokens = (
 	'COPY',
 	'PRE_EMPHASIS',
 	'ISRC',
+	'RESERVED4',
 	'TWO_CHANNEL_AUDIO',
 	'LCURLY',
 	'RCURLY',
@@ -121,6 +123,7 @@ t_COPY = r'COPY'
 t_PRE_EMPHASIS = r'PRE_EMPHASIS'
 t_TWO_CHANNEL_AUDIO = r'TWO_CHANNEL_AUDIO'
 t_ISRC = r'ISRC'
+t_RESERVED4 = r'RESERVED4'
 t_LCURLY = r'\{'
 t_RCURLY = r'\}'
 t_COLON = r':'
@@ -312,6 +315,10 @@ def p_CDLANGOPT_upcean(p):
 def p_CDLANGOPT_isrc(p):
 	'CDLANGOPT : ISRC TEXT'
 	p[0] = ('isrc', p[2])
+
+def p_CDLANGOPT_reserved4(p):
+	'CDLANGOPT : RESERVED4 TEXT'
+	p[0] = ('reserved4', p[2])
 
 def p_CDLANGOPT_tocinfo1(p):
 	'CDLANGOPT : TOC_INFO1 LCURLY NUMBERCSV RCURLY'

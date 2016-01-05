@@ -163,7 +163,7 @@ def t_NUMBER(t):
 	return t
 
 def t_TEXT(t):
-	r'"[^"]*"'
+	r'"(?:[^"\\]|\\.)*"'
 	t.value = t.value[1:-1]
 	return t
 

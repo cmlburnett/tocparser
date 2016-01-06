@@ -47,6 +47,7 @@ The BNF is shown below and is implemented PLY-style by including one clause in i
   CDLANGOPT : TITLE TEXT
             | PERFORMER TEXT
             | MESSAGE TEXT
+			| GENRE LCURLY NUMBERCSV RCURLY
             | SIZE_INFO LCURLY NUMBERCSV RCURLY
             | SONGWRITER TEXT
             | COMPOSER TEXT
@@ -96,6 +97,7 @@ tokens = (
 	'TITLE',
 	'PERFORMER',
 	'MESSAGE',
+	'GENRE',
 	'SIZE_INFO',
 	'SONGWRITER',
 	'COMPOSER',
@@ -140,6 +142,7 @@ t_FILE = r'FILE'
 t_TITLE = r'TITLE'
 t_PERFORMER = r'PERFORMER'
 t_MESSAGE = r'MESSAGE'
+t_GENRE = r'GENRE'
 t_SIZE_INFO = r'SIZE_INFO'
 t_SONGWRITER = r'SONGWRITER'
 t_COMPOSER = r'COMPOSER'
@@ -304,6 +307,10 @@ def p_CDLANGOPT_performer(p):
 def p_CDLANGOPT_message(p):
 	'CDLANGOPT : MESSAGE TEXT'
 	p[0] = ('message', p[2])
+
+def p_CDLANGOPT_genre(p):
+	'CDLANGOPT : GENRE LCURLY NUMBERCSV RCURLY'
+	p[0] = ('genre', p[3])
 
 def p_CDLANGOPT_sizeinfo(p):
 	'CDLANGOPT : SIZE_INFO LCURLY NUMBERCSV RCURLY'

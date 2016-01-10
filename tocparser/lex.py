@@ -60,8 +60,13 @@ The BNF is shown below and is implemented PLY-style by including one clause in i
 
   NUMBERCSV : NUMBERCSV COMMA NUMBER
 
-   FILELINE : FILE TEXT TIMES START TIME
+   FILELINE : FILE TEXT TIMES START TIME INDICES
+            | FILE TEXT TIMES START TIME
+            | FILE TEXT TIMES            INDICES
             | FILE TEXT TIMES
+
+    INDICES : INDICES INDEX TIME
+            | INDEX TIME
 
       TIMES : NUMBER TIME
             : TIME TIME
@@ -88,6 +93,7 @@ tokens = (
 	'RCURLY',
 	'COLON',
 	'START',
+	'INDEX',
 	'COMMA',
 
 	'LANGUAGE',
@@ -133,6 +139,7 @@ t_LCURLY = r'\{'
 t_RCURLY = r'\}'
 t_COLON = r':'
 t_START = r'START'
+t_INDEX = r'INDEX'
 t_COMMA = r','
 
 t_LANGUAGE = r'LANGUAGE'
@@ -356,14 +363,32 @@ def p_NUMBERCSV_term(p):
 	'NUMBERCSV : NUMBER'
 	p[0] = [p[1]]
 
+def p_FILELINE_start_index(p):
+	'FILELINE : FILE TEXT TIMES START TIME INDICES'
+	# XXX: ignores the start gap and index
+	p[0] = {'path': p[2], 'times': p[3], 'start': p[5], 'indices': p[6]}
+
+def p_FILELINE_index(p):
+	'FILELINE : FILE TEXT TIMES            INDICES'
+	# XXX: ignores the start gap
+	p[0] = {'path': p[2], 'times': p[3], 'indices': p[4]}
+
 def p_FILELINE_start(p):
 	'FILELINE : FILE TEXT TIMES START TIME'
 	# XXX: ignores the start gap
-	p[0] = {'path': p[2], 'times': p[3]}
+	p[0] = {'path': p[2], 'times': p[3], 'start': p[5]}
 
 def p_FILELINE(p):
 	'FILELINE : FILE TEXT TIMES'
 	p[0] = {'path': p[2], 'times': p[3]}
+
+def p_INDICES(p):
+	'INDICES : INDICES INDEX TIME'
+	p[0] = p[1].append(p[3])
+
+def p_INDICES_index(p):
+	'INDICES : INDEX TIME'
+	p[0] = [p[2]]
 
 def p_TIMES_number(p):
 	'TIMES : NUMBER TIME'

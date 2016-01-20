@@ -141,6 +141,10 @@ class TOC:
 		# Lex & Yacc out the structure
 		p = yaccer(txt)
 
+		# Get the catalog string
+		if p['catalog'] != None:
+			self._catalog = p['catalog']
+
 		# Get the header information
 		if p['header'] != None:
 			h = Header(p['header'])
@@ -156,6 +160,13 @@ class TOC:
 		# Assign to this object
 		self._header = h
 		self._tracks = ts
+
+	@property
+	def Catalog(self):
+		"""
+		Thirteen character catalog number as registered with the RIAA.
+		"""
+		return self._catalog
 
 	@property
 	def Header(self):
@@ -206,8 +217,6 @@ class Header:
 		self._langmap = {}
 		self._meta = {}
 
-		self._catalog = p['catalog']
-
 		for entry in p['map']:
 			self._langmap[ entry[0] ] = (entry[1], LangCodeTo2Letter(entry[1]), LangCodeToName(entry[1]))
 
@@ -228,13 +237,6 @@ class Header:
 		Probably not the best mapping but deal with it...or fix it.
 		"""
 		return self._langmap
-
-	@property
-	def Catalog(self):
-		"""
-		Thirteen character catalog number as registered with the RIAA.
-		"""
-		return self._catalog
 
 	@property
 	def Meta(self):

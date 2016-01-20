@@ -7,11 +7,14 @@ Because of the intended use, the only API provided is a simple read-in-once-and-
 
 The BNF is shown below and is implemented PLY-style by including one clause in its own function.
 
-      WHOLE : CD_DA HEADER TRACKS
-            | CD_DA        TRACKS
+      WHOLE : CD_DA CATTEXT HEADER TRKS
+	        | CD_DA         HEADER TRKS
+			| CD_DA CATTEXT        TRKS
+            | CD_DA                TRKS
 
-     HEADER : CATALOG TEXT CD_TEXT LCURLY LMAP CDLANGS RCURLY
-            |              CD_TEXT LCURLY LMAP CDLANGS RCURLY
+    CATTEXT : CATALOG TEXT
+
+     HEADER : CD_TEXT LCURLY LMAP CDLANGS RCURLY
 
        LMAP : LANGUAGE_MAP LCURLY LMAPOPTS RCURLY
 
@@ -23,10 +26,10 @@ The BNF is shown below and is implemented PLY-style by including one clause in i
        TRKS : TRKS TRK
             | TRK
 
-        TRK : COMMENT TRACK AUDIO CPY PE ISRC TEXT TWO_CHANNEL_AUDIO CDT FILELINE
-            | COMMENT TRACK AUDIO CPY PE ISRC TEXT TWO_CHANNEL_AUDIO     FILELINE
-            | COMMENT TRACK AUDIO CPY PE           TWO_CHANNEL_AUDIO CDT FILELINE
-            | COMMENT TRACK AUDIO CPY PE           TWO_CHANNEL_AUDIO     FILELINE
+        TRK : COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO ISRC TEXT CDT FILELINE
+            | COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO ISRC TEXT     FILELINE
+            | COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO           CDT FILELINE
+            | COMMENT TRACK AUDIO CPY PE TWO_CHANNEL_AUDIO               FILELINE
 
         CPY : NO COPY
             | COPY
@@ -207,21 +210,29 @@ def lexer(txt):
 # --------------------------------------------------------------------------------
 # Parsing
 
-def p_WHOLE_header(p):
-	'WHOLE : CD_DA HEADER TRKS'
-	p[0] = {'header': p[2], 'tracks': p[3]}
-
 def p_WHOLE(p):
-	'WHOLE : CD_DA        TRKS'
-	p[0] = {'header': None, 'tracks': p[2]}
+	'WHOLE : CD_DA CATTEXT HEADER TRKS'
+	p[0] = {'catalog': p[2], 'header': p[3], 'tracks': p[4]}
 
-def p_HEADER_catalog(p):
-	'HEADER : CATALOG TEXT CD_TEXT LCURLY LMAP CDLANGS RCURLY'
-	p[0] = {'catalog': p[2], 'map': p[5], 'langs': p[6]}
+def p_WHOLE_header(p):
+	'WHOLE : CD_DA         HEADER TRKS'
+	p[0] = {'catalog': None, 'header': p[2], 'tracks': p[3]}
+
+def p_WHOLE_catalog(p):
+	'WHOLE : CD_DA CATTEXT        TRKS'
+	p[0] = {'catalog': p[2], 'header': None, 'tracks': p[3]}
+
+def p_WHOLE_tracks(p):
+	'WHOLE : CD_DA                TRKS'
+	p[0] = {'catalog': None, 'header': None, 'tracks': p[2]}
+
+def p_CATTEXT(p):
+	'CATTEXT : CATALOG TEXT'
+	p[0] = p[2]
 
 def p_HEADER(p):
 	'HEADER : CD_TEXT LCURLY LMAP CDLANGS RCURLY'
-	p[0] = {'catalog': None, 'map': p[3], 'langs': p[4]}
+	p[0] = {'map': p[3], 'langs': p[4]}
 
 def p_LMAP(p):
 	'LMAP : LANGUAGE_MAP LCURLY LMAPOPTS RCURLY'
@@ -405,7 +416,7 @@ def p_error(p):
 	raise Exception("Syntax error while yacc'ing the input", str(p))
 
 
-def yaccer(txt):
-	parser = yacc.yacc()
+def yaccer(txt, debug=False):
+	parser = yacc.yacc(debug=debug)
 	return parser.parse(txt, lexer=lex.lex())
 
